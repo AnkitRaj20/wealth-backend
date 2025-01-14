@@ -52,6 +52,10 @@ export const createAccount = asyncHandler(async (req, res) => {
 export const getAllAccounts = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
+  if(!id){
+    return sendResponse(res, httpStatus.BAD_REQUEST, "User id is required");
+  }
+
   const accounts = await Account.findAndCountAll({
     where: { userId: id },
     order: [["createdAt", "DESC"]],
@@ -63,6 +67,7 @@ export const getAllAccounts = asyncHandler(async (req, res) => {
 
   return sendResponse(res, httpStatus.OK, accounts.rows, accounts.count);
 });
+
 
 // Update Default Account
 export const updateDefaultAccount = asyncHandler(async (req, res) => {
@@ -94,9 +99,11 @@ export const updateDefaultAccount = asyncHandler(async (req, res) => {
       "Account with this id does not exist"
     );
   }
-
+console.log("-----------------")
+  console.log(account.userId)
+  console.log(userId)
   // Check if account belongs to the user
-  if (account.userId !== userId) {
+  if (parseInt(account.userId) !== parseInt(userId)) {
     return sendResponse(
       res,
       httpStatus.BAD_REQUEST,
